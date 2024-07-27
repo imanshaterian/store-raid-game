@@ -50,26 +50,40 @@ def display_inventory(store):
 # Function to get an item from the user
 def get_item(store):
     while True:
-        item = input(f"Enter the item you want to take from {store['name']} (type 'list' to see items again): ").strip().lower()
+        item = input(f"Enter the item you want to take from {store['name']} (type 'list' to see items again, 'exit' to leave the store): ").strip().lower()
         if item == 'list':
             display_inventory(store)
+        elif item == 'exit':
+            return None
         elif item in store and item != 'name':
             return item
         else:
             print("Invalid item, please try again.")
 
-# Player's collected items
+# Player's collected items and purse
 collected_items = []
+purse = 1000
 
 # Main game loop
 for store in stores:
     display_inventory(store)
     item = get_item(store)
-    collected_items.append(item)
-    del store[item]  # Remove the item from the store inventory
-    print(f"You have taken the {item} from {store['name']}.\n")
+    if item:
+        collected_items.append(item)
+        purse -= store[item]  # Deduct the item price from the purse
+        del store[item]  # Remove the item from the store inventory
+        print(f"You have taken the {item} from {store['name']}.\n")
+    else:
+        print(f"You left the {store['name']} without buying anything.\n")
 
-# Display collected items
-print("You have collected the following items:")
-for item in collected_items:
-    print(f"- {item}")
+# Display collected items and remaining gold
+total_cost = 1000 - purse
+if collected_items:
+    print("You have collected the following items:")
+    for item in collected_items:
+        print(f"- {item}")
+else:
+    print("You didn't buy anything from any of the shops.")
+
+print(f"\nTotal cost of items: {total_cost} gold pieces")
+print(f"Gold left in purse: {purse} gold pieces")
